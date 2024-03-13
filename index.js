@@ -9,6 +9,7 @@ import { UserRouter } from "./routes/user.js";
 const URL_CONNECT2 = process.env.URL_CONNECT2;
 
 const app = express();
+
 app.use(express.json());
 app.use(
   cors({
