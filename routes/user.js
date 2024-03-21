@@ -1,5 +1,5 @@
 import express from "express";
-import bcryt from "bcrypt";
+// import bcryt from "bcrypt";
 const router = express.Router();
 import { User } from "../models/User.js";
 import jwt from "jsonwebtoken";
@@ -11,11 +11,11 @@ router.post("/signUp", async (req, res) => {
   if (user) {
     return res.json({ message: "user already exists" });
   }
-  const hashpassword = await bcryt.hash(password, 10);
+  // const hashpassword = await bcryt.hash(password, 10);
   const newUser = new User({
     username,
     email,
-    password: hashpassword,
+    password,
   });
 
   await newUser.save();
@@ -28,10 +28,10 @@ router.post("/login", async (req, res) => {
   if (!user) {
     return res.json({ message: "user is not registered" });
   }
-  const validPassword = await bcryt.compare(password, user.password);
-  if (!validPassword) {
-    return res.json({ message: "password is incorrect" });
-  }
+  // const validPassword = await bcryt.compare(password, user.password);
+  // if (!validPassword) {
+  //   return res.json({ message: "password is incorrect" });
+  // }
   const token = jwt.sign({ username: user.username }, process.env.KEY, {
     expiresIn: "1h",
   });
@@ -84,8 +84,8 @@ router.post("/reset-password/:token", async (req, res) => {
   try {
     const decoded = await jwt.verify(token, process.env.KEY);
     const id = decoded.id;
-    const hashPassword = await bcryt.hash(password, 10);
-    await User.findByIdAndUpdate({ _id: id }, { password: hashPassword });
+    // const hashPassword = await bcryt.hash(password, 10);
+    await User.findByIdAndUpdate({ _id: id }, { password });
     return res.json({ status: true, message: "updated password" });
   } catch (err) {
     return res.json("invalid token");
